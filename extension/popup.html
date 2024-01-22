@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Progress Bars</title>
+    <style>
+        
+        body {
+            width: 300px; 
+            height: 440px; 
+            overflow: auto; 
+        }
+    
+        
+        
+        /*
+        body {
+            min-height: 470px;
+        
+            margin: 0;
+            padding: 0;
+        }
+        */
+        
+        .chart-container {
+            
+            display: flex;
+            flex-shrink: 0;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .progress-circle {
+        
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px; /* Adjusted size */
+            height: 80px; /* Adjusted size */
+            margin: 5px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 3.5;
+        }
+        
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+
+        @keyframes progress {
+            0% {
+                stroke-dasharray: 0 100;
+            }
+        }
+
+        /* Customize the stroke color */
+        .circle-blue {
+            stroke: #3498db;
+        }
+        .circle-red {
+            stroke: red;
+        }
+        .circle-green {
+            stroke: green;
+        }
+
+        /* Adjust the stroke-dasharray value to reflect the percentage */
+        
+        
+        .percentage {
+            font-size: 8px; /* Adjusted font size */
+            dominant-baseline: central;
+            text-anchor: middle;
+            fill: #3498db; /* blue color */
+        }
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgb(28, 123, 36);
+            color: white;
+            border-radius: 4px;
+            position: relative; /* Allows absolute positioning relative to this container */
+            height: 20px;
+            margin-bottom: 19px; /* Adjust as needed */
+        }
+
+        .progress-bar {
+            background-color: rgb(220, 34, 34);
+            color: white;
+            height: 100%; 
+            /* Full height of the container */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px 0 0 4px; /* Rounded corners on the left side */
+            position: absolute; /* Absolute position */
+            left: 0; /* Align to the left side */
+            top: 0; /* Align to the top */
+        }
+
+        .progress-remaining {
+            padding-right: 10px; /* Adjust as needed */
+            position: absolute; /* Absolute position */
+            right: 0; /* Align to the right side */
+            top: 0; /* Align to the top */
+            height: 100%; /* Full height of the container */
+            display: flex;
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+
+        #seeMoreButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #c5ddf5;
+            color: rgb(12, 6, 6);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .categories {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .type-percentage {
+            font-size: 4.5px; /* Adjusted font size */
+            font-weight: bold;
+            dominant-baseline: bottom ;
+            text-anchor: middle;
+            fill: rgb(65, 74, 79); 
+            margin: 100px;
+        }
+        /* Add styles for the loader */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 100px; /* Adjust the width to make it bigger */
+            height: 100px; /* Adjust the height to make it bigger */
+            position: fixed; /* Fixed position to cover the entire viewport */
+            top: 35%; /* Center vertically by setting it to 50% */
+            left: 32%; /* Center horizontally by setting it to 50% */
+            transform: translate(-50%, -50%); 
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+            z-index: 9999; /* Ensure it's above other content */
+            animation: spin 2s linear infinite;
+        }
+
+        
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+
+
+
+    </style>
+</head>
+<body>
+     <!-- loading bar -->
+     <div id="loadingBar" style="display:none;">
+        <div class="loader"></div>
+    </div>
+
+    <div class="chart-container">
+        <!-- First Chart -->
+        <svg viewBox="0 0 36 36" class="progress-circle" style="margin-left: 10px;">
+            <path class="circle-bg"
+                  d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <path class="circle circle-blue"
+                  stroke-dasharray="80, 100"
+                  d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <!-- <text x="18" y="18" class="percentage">10%</text> -->
+            <text x="18" y="18" class="percentage" id="neutreValue"></text>
+            <text x="18" y="29" class="type-percentage">Neutral</text>
+        </svg>
+
+        <!-- Second Chart -->
+        <svg viewBox="0 0 36 36" class="progress-circle">
+          <path class="circle-bg"
+                d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <path class="circle circle-green"
+                stroke-dasharray="80, 100"
+                d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <!-- <text x="18" y="18" class="percentage">70%</text> -->
+          <text x="18" y="18" class="percentage" id="PositifValue"></text>
+          <text x="18" y="29" class="type-percentage">Positif</text>
+      </svg>
+  
+        <!-- Third Chart -->
+        <svg viewBox="0 0 36 36" class="progress-circle">
+          <path class="circle-bg"
+                d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <path class="circle circle-red"
+                stroke-dasharray="50, 100"
+                d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <!-- <text x="18" y="18" class="percentage">20%</text> -->
+          <text x="18" y="18" class="percentage" id="negatifValue"></text>
+          <text x="18" y="29" class="type-percentage">Negatif</text>
+          
+      </svg>
+    </div>
+
+   
+
+    <div class="categories">
+        <div id="Categorie1"></div>
+    </div>
+    
+
+    <!-- First Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar1"></div>
+        <div class="progress-remaining" id="progress-remaining1" ></div>
+    </div>
+
+    <div class="categories">
+        <div id="Categorie2"></div>
+    </div>
+
+    <!-- Second Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar2"></div>
+        <div class="progress-remaining" id="progress-remaining2" ></div>
+    </div>
+
+    <div class="categories">
+        <div id="Categorie3"></div>
+    </div>
+
+    <!-- Third Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar3"></div>
+        <div class="progress-remaining" id="progress-remaining3" ></div>
+    </div>
+    <div class="categories">
+        <div id="Categorie4"></div>
+    </div>
+
+    <!-- Fourth Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar4"></div>
+        <div class="progress-remaining" id="progress-remaining4" ></div>
+    </div>
+
+    <!-- Bouton "See More" -->
+    <button id="seeMoreButton">See More</button>
+
+    <script src="popup.js"></script>
+</body>
+</html>
